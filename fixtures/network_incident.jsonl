@@ -1,0 +1,3 @@
+{"id":"route-001","time_ns":1000000000,"kind":"route_change","source":"rtnetlink","fields":{"operation":"blackhole_route_installed","destination":"10.10.2.2/32"}}
+{"id":"tcp-001","time_ns":1100000000,"kind":"tcp_connect","source":"epoll_sampler","fields":{"ok":false,"error_errno":113}}
+{"id":"queue-001","time_ns":1500000000,"kind":"queue_stats","source":"udp_pipeline","fields":{"application_queue_drops":14,"ring_capacity":4}}

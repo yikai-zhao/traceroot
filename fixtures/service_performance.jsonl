@@ -1,0 +1,4 @@
+{"id":"span-001","time_ns":1000000000,"kind":"service_span","source":"frontend","fields":{"trace_id":"trace-42","span_id":"frontend-1","service":"frontend","duration_ms":850}}
+{"id":"span-002","time_ns":1010000000,"kind":"service_span","source":"database","fields":{"trace_id":"trace-42","span_id":"db-1","service":"database","duration_ms":730}}
+{"id":"cpu-001","time_ns":1100000000,"kind":"resource_sample","source":"database","fields":{"cpu_percent":97.5,"rss_bytes":201326592}}
+{"id":"tool-001","time_ns":1200000000,"kind":"agent_tool_call","source":"worker","fields":{"tool":"query_service","status":"error","duration_ms":150,"error":"timeout"}}
