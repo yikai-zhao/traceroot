@@ -95,6 +95,26 @@ class TraceAttributionTests(unittest.TestCase):
     def test_mismatched_operations_abstain(self):
         x=compare_runs(cohort('a'),cohort('b',db_extra=100,operation='delete_item'))
         self.assertEqual(x['decision'],'insufficient_comparable_evidence')
+    def test_same_service_set_but_missing_span_abstains(self):
+        before=cohort('before')
+        after=cohort('after',db_extra=75)
+        # A second database call appears in candidate traces. The service
+        # names have not changed, but per-request topology has changed.
+        for i in range(5):
+            trace=f'after-{i}'
+            after.append(span(f'{trace}-retry', trace, 'retry', 'db',
+                              0, 5, 'front'))
+        r=compare_runs(before,after)
+        self.assertEqual(r['decision'],'insufficient_comparable_evidence')
+        self.assertIsNone(r['hypothesis'])
+
+    def test_one_missing_child_abstains(self):
+        before=cohort('before')
+        after=cohort('after',db_extra=75)
+        after=[e for e in after if e.id != 'after-3-db']
+        r=compare_runs(before,after)
+        self.assertEqual(r['decision'],'insufficient_comparable_evidence')
+
     def test_no_samples_abstain(self):
         self.assertEqual(compare_runs([],[])['decision'],'insufficient_comparable_evidence')
     def test_synthetic_label_grid(self):

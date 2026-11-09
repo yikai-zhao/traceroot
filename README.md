@@ -24,9 +24,13 @@ python3 scripts/reproduce_http_regression.py --cpp-backend build/cpp_backend \
 
 # All regression, negative-evidence, and real-socket tests
 python3 -m unittest discover -s tests -v
+
+# Label-withheld, real-socket evaluation (4 classes x 3 seeded repetitions)
+python3 scripts/evaluate_blind_cases.py --cpp-backend build/cpp_backend \
+  --output lab-output/blind-evaluation --seeds 11 23 37 --requests 4
 ```
 
-The local experiment injects backend CPU work, frontend CPU work and a no-regression control. Seven independent requests are collected per cohort; reports include verified event IDs, source SHA-256, measured CPU time and explicit limits. [Experimental evidence and reasoning](docs/REAL_HTTP_EVIDENCE.md) · [Captured sample SHA-256 manifest](evidence/real-http-cpp/SHA256SUMS).
+The local experiment injects backend CPU work, frontend CPU work and a no-regression control. Seven independent requests are collected per cohort; reports include verified event IDs, source SHA-256, measured CPU time and explicit limits. A separate label-withheld test evaluates backend, frontend, no-regression and subthreshold cases; mismatched span topology now causes abstention rather than confident misattribution. [Experimental evidence and reasoning](docs/REAL_HTTP_EVIDENCE.md) · [Label-withheld evaluation and limits](docs/BLIND_EVALUATION.md) · [Captured sample SHA-256 manifest](evidence/real-http-cpp/SHA256SUMS).
 
 ## Why this project exists
 

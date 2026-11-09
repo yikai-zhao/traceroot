@@ -1,0 +1,135 @@
+{
+  "setting": "local Python frontend + C++17 backend, 4 requests per cohort",
+  "type": "controlled label-withheld regression evaluation",
+  "cases_total": 12,
+  "cases_passed": 12,
+  "status": "PASS",
+  "cases": [
+    {
+      "case_id": "s0011-c00",
+      "ground_truth": "backend",
+      "prediction": "backend",
+      "passed": true,
+      "baseline_hash": "612d9811cf023d6d705aa177c2b8a2cc1d362635bff912561ab7ae4a08a0f772",
+      "candidate_hash": "947e04941db0b6d9ae9681aa0f8cc7f986426a2892421517974f3ca3b279078c",
+      "baseline_median_ms": 3.7195,
+      "candidate_median_ms": 43.807
+    },
+    {
+      "case_id": "s0011-c01",
+      "ground_truth": "frontend",
+      "prediction": "frontend",
+      "passed": true,
+      "baseline_hash": "9d68268c560118c1de65033dbe6f7a25182228f86e06ecb4abb275fab8e5b05c",
+      "candidate_hash": "38c0638c898f669f426d0c813233ee6b777c78e74f6bc5fe35fe69e825351427",
+      "baseline_median_ms": 3.6795,
+      "candidate_median_ms": 44.6425
+    },
+    {
+      "case_id": "s0011-c02",
+      "ground_truth": "no_regression",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "eaf0d5d2bad04fe03dee5c1fd0c4ab4f465f96080f71a084e0c59aaba1c0b932",
+      "candidate_hash": "c796f4b628dec4341d677b6fba3e58c329d8ed09c8aa95d9807b30315f5daf8c",
+      "baseline_median_ms": 3.5815,
+      "candidate_median_ms": 3.544
+    },
+    {
+      "case_id": "s0011-c03",
+      "ground_truth": "subthreshold",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "4335930cb55d4088f4640051815fbce48b04cb4fc472371947385a55e4c8635e",
+      "candidate_hash": "78e74278311c5e0a42c5c658e00a0265b94858a731bc9dc5c055249e3bb5284b",
+      "baseline_median_ms": 3.6455,
+      "candidate_median_ms": 11.821
+    },
+    {
+      "case_id": "s0023-c00",
+      "ground_truth": "frontend",
+      "prediction": "frontend",
+      "passed": true,
+      "baseline_hash": "143a38ea1ce77e4c6b432471e73d857332a445f82f10d837e1745c6c1ebfbd68",
+      "candidate_hash": "2e64e3d0be4f0a7ab64723a3d75bae1a014302378163ab85f0563a43d3054c06",
+      "baseline_median_ms": 3.4625000000000004,
+      "candidate_median_ms": 44.535
+    },
+    {
+      "case_id": "s0023-c01",
+      "ground_truth": "subthreshold",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "a5f66a2ad0bcc328aae377f49ece855f4d49304ef0817b50510145021ef0ccb6",
+      "candidate_hash": "757de185dedd0bfd630a16c55e66f4aaf3a94a39af287119296622f745fdd69b",
+      "baseline_median_ms": 3.4539999999999997,
+      "candidate_median_ms": 11.600999999999999
+    },
+    {
+      "case_id": "s0023-c02",
+      "ground_truth": "backend",
+      "prediction": "backend",
+      "passed": true,
+      "baseline_hash": "8fef228ff1f442401411803b455f0b3407eb98d60d43718ca7bb5d841af88bcf",
+      "candidate_hash": "393a2e498dabef3c1f363151d51ce0714cf6d76edfb6aaefd09c4e02922720ca",
+      "baseline_median_ms": 3.418,
+      "candidate_median_ms": 43.923500000000004
+    },
+    {
+      "case_id": "s0023-c03",
+      "ground_truth": "no_regression",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "c38caa936a7b40043e4cfe6a0219fc1840ef0969f63944be10a2ff3c7683e737",
+      "candidate_hash": "b7b455404ccf18e6b802fd54799f50cabb1278c16719d2b89f663654c3696749",
+      "baseline_median_ms": 3.518,
+      "candidate_median_ms": 3.4619999999999997
+    },
+    {
+      "case_id": "s0037-c00",
+      "ground_truth": "frontend",
+      "prediction": "frontend",
+      "passed": true,
+      "baseline_hash": "76a53a59f450fa42f79f5e0927d2cd636c5b2b813075bb8f5628e857e0ad5637",
+      "candidate_hash": "33aa5f12e7dc1edd39e7bb43a27f4f06ca40ccf2e12fb67be0603a769950ec64",
+      "baseline_median_ms": 3.849,
+      "candidate_median_ms": 44.658
+    },
+    {
+      "case_id": "s0037-c01",
+      "ground_truth": "subthreshold",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "5cdceb6dae78689af6be582f83cec7305d4a3a12162d6e4e7db2d59f385227a6",
+      "candidate_hash": "3d6ae6d07668d404b85bf13f6db5c3f1a23fce4058f6410490c9f72d009ef8c1",
+      "baseline_median_ms": 3.6025,
+      "candidate_median_ms": 11.6155
+    },
+    {
+      "case_id": "s0037-c02",
+      "ground_truth": "no_regression",
+      "prediction": "no_regression",
+      "passed": true,
+      "baseline_hash": "33ba8751c52d90b0a7c1d98cc2037caef29fb4eaaeda59bbc0601786ebeb913b",
+      "candidate_hash": "f0c6e5281d984713df307c228093f374027afa22f7a2218fd06c59d7cc63b47a",
+      "baseline_median_ms": 3.6125,
+      "candidate_median_ms": 3.409
+    },
+    {
+      "case_id": "s0037-c03",
+      "ground_truth": "backend",
+      "prediction": "backend",
+      "passed": true,
+      "baseline_hash": "13c5c6c339a4ea9edc54dbeba85c56a48bdc77e2965cb9eaba1a8b5b261e0aff",
+      "candidate_hash": "5ae361a73de3b6f4a82cbb1784bf92dd3f91139a654350f706e186dd9fce9790",
+      "baseline_median_ms": 3.815,
+      "candidate_median_ms": 43.502
+    }
+  ],
+  "limitations": [
+    "No external production cases",
+    "One host/same monotonic domain",
+    "Traces generated after controlled CPU intervention, not a learned benchmark",
+    "Results must be reproduced under a new host; no agent or LLM involved"
+  ]
+}

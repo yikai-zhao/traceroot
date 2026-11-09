@@ -119,6 +119,14 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
                     raise ValueError(f'{trace_id}: cyclic parent chain')
                 seen.add(cursor.span_id)
                 cursor = nodes[cursor.parent]
+        # Compare full parent/child span shape, not only the set of service names.
+        # An extra retry or missing child in one cohort makes its latency
+        # attribution structurally incomparable, even if the service set matches.
+        topology = sorted((span.service,
+                           nodes[span.parent].service if span.parent else '',
+                           span.operation or '',
+                           nodes[span.parent].operation or '' if span.parent else '')
+                          for span in nodes.values())
         rows = []
         for span in nodes.values():
             child_coverage = _union_ns([(c.start_ns, c.end_ns) for c in children[span.span_id]])
@@ -135,6 +143,7 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
             'trace_id': trace_id, 'clock_domain': domains[trace_id],
             'operation': roots[0].operation if len(roots) == 1 else None,
             'span_count': len(nodes), 'root_count': len(roots),
+            'topology_signature': topology,
             'wall_ms': round((max(n.end_ns for n in nodes.values()) -
                               min(n.start_ns for n in nodes.values())) / 1e6, 3),
             'largest_exclusive_span': {'evidence_id': top['evidence_id'],
@@ -165,6 +174,8 @@ def compare_runs(baseline: Iterable[Event], candidate: Iterable[Event],
     if any(r['root_count'] != 1 or r['operation'] is None for r in all_runs):
         return result
     if len({r['operation'] for r in all_runs}) != 1:
+        return result
+    if any(r['topology_signature'] != all_runs[0]['topology_signature'] for r in all_runs[1:]):
         return result
     def service_totals(run: dict) -> dict[str, float]:
         totals = defaultdict(float)
