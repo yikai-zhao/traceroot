@@ -1,19 +1,37 @@
-# TraceRoot — Evidence-Driven Infrastructure Debugging
+# TraceRoot
 
-An offline, reproducible baseline for investigating cross-service latency regressions. It reads normalized JSONL events, validates trace relationships and compares repeated service traces without inventing a root cause.
+Evidence-grounded latency regression diagnosis across service boundaries.
 
-**Status:** deterministic prototype only. No LLM agent, production profiler, OpenTelemetry collector, paid API or CI automation.
+TraceRoot validates request/span relationships, attributes **exclusive** service time and compares repeated traces. It reports the largest measured latency contributor and cites the underlying event IDs. If requests, services or clocks are incomparable, it abstains instead of guessing.
 
-## Run locally
+**What runs now:** deterministic offline analyzer; real localhost Python→C++ HTTP experiment with trace propagation, monotonic timestamps and controlled CPU regressions. **Not** a production profiler, OpenTelemetry collector, AI agent or proven autonomous root-cause detector.
+
+## Reproduce
+
+Python 3.10+ (standard library only); C++ demonstration requires Linux and g++:
 
 ```bash
-PYTHONPATH=src python3 -m traceroot fixtures/service_performance.jsonl
-PYTHONPATH=src python3 -m traceroot --compare fixtures/regression/baseline.jsonl fixtures/regression/db_slow.jsonl
+# Offline synthetic fixtures
+PYTHONPATH=src python3 -m traceroot --compare \
+  fixtures/regression/baseline.jsonl fixtures/regression/db_slow.jsonl
+
+# Actual loopback Python frontend + C++17 backend (no external traffic)
+mkdir -p build
+g++ -O2 -std=c++17 -Wall -Wextra -Wpedantic \
+  examples/cpp_backend.cpp -o build/cpp_backend
+python3 scripts/reproduce_http_regression.py --cpp-backend build/cpp_backend \
+  --output lab-output/real-http-regression
+
+# All regression, negative-evidence, and real-socket tests
 python3 -m unittest discover -s tests -v
 ```
 
-The supplied regression cases are **synthetic**. Five baseline and five candidate request traces expose a deliberately injected 80 ms database-only slowdown; the comparator reports the largest increase in exclusive span time, not a proven causal root cause. It refuses insufficient, mismatched, or malformed trace evidence.
+The local experiment injects backend CPU work, frontend CPU work and a no-regression control. Seven independent requests are collected per cohort; reports include verified event IDs, source SHA-256, measured CPU time and explicit limits. [Experimental evidence and reasoning](docs/REAL_HTTP_EVIDENCE.md) · [Captured sample SHA-256 manifest](evidence/real-http-cpp/SHA256SUMS).
 
-Focus: cross-service trace correlation, local C++/Python performance diagnosis, evidence integrity and eventually bounded, evaluated read-only agent tooling. Route Incident Lab separately covers Linux network datapaths, backpressure and fault recovery.
+## Why this project exists
 
-No commercial, employer or customer data belongs in this repository. No GitHub Actions, paid hosting, remote APIs or auto-deployments.
+When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof.
+
+Route Incident Lab separately covers network datapaths, kernel routing failures, UDP backpressure and low-latency trade-offs. TraceRoot focuses on application/service diagnosis and evidence integrity; it does **not** duplicate the routing lab.
+
+No employer/customer data, paid APIs, hosted CI, GitHub Actions or autonomous system changes. The optional future LLM/agent layer is **not implemented**.
