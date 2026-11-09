@@ -13,6 +13,7 @@ from statistics import median
 from typing import Iterable
 
 from .core import Event
+from .topology import canonical_topology
 
 
 @dataclass(frozen=True)
@@ -122,11 +123,7 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
         # Compare full parent/child span shape, not only the set of service names.
         # An extra retry or missing child in one cohort makes its latency
         # attribution structurally incomparable, even if the service set matches.
-        topology = sorted((span.service,
-                           nodes[span.parent].service if span.parent else '',
-                           span.operation or '',
-                           nodes[span.parent].operation or '' if span.parent else '')
-                          for span in nodes.values())
+        topology = canonical_topology(nodes)
         rows = []
         for span in nodes.values():
             child_coverage = _union_ns([(c.start_ns, c.end_ns) for c in children[span.span_id]])

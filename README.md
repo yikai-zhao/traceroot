@@ -34,7 +34,7 @@ The local experiment injects backend CPU work, frontend CPU work and a no-regres
 
 ## Why this project exists
 
-When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof.
+When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof. The comparator also fingerprints the **full rooted call tree**, so moving a child between two same-named service spans no longer yields a false comparable-cohort claim. [Adversarial counterexample](docs/TOPOLOGY_COMPARABILITY.md).
 
 Route Incident Lab separately covers network datapaths, kernel routing failures, UDP backpressure and low-latency trade-offs. TraceRoot focuses on application/service diagnosis and evidence integrity; it does **not** duplicate the routing lab.
 
