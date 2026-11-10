@@ -36,6 +36,8 @@ The local experiment injects backend CPU work, frontend CPU work and a no-regres
 
 **Latest evidence audit (2026-11-10):** The comparison now abstains if the baseline reports an explicit monotonic clock-host identity but the candidate assumes an unverified origin (or vice versa). Legacy all-untagged analysis remains explicitly marked unverified. [Cross-cohort counterexample](docs/CLOCK_COHORT_AUDIT.md).
 
+**New real localhost HTTP audit (2026-11-10):** Captured 28 actual client requests and 56 linked spans through a Python frontend→backend over TCP. Independently injected backend/frontend CPU work was attributed to the measured contributor; the unchanged control stayed negative; deliberately withheld host-clock provenance caused abstention. These are single-host controlled injections, **not production distributed root-cause discovery**. [Reproduce and inspect actual JSONL evidence](docs/LIVE_HTTP_PROVENANCE_20261110.md).
+
 ## Why this project exists
 
 When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof. The comparator also fingerprints the **full rooted call tree**, so moving a child between two same-named service spans no longer yields a false comparable-cohort claim. [Adversarial counterexample](docs/TOPOLOGY_COMPARABILITY.md).

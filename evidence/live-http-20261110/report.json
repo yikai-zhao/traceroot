@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "scope": "two real local Python HTTP servers, not distributed hardware",
+  "requests_per_cohort": 7,
+  "total_actual_http_requests": 28,
+  "host_clock_identity_source": "Linux /proc/sys/kernel/random/boot_id (self-reported)",
+  "traces": 28,
+  "span_rows": 56,
+  "sha256": {
+    "baseline": "591de70d4f027de709b34fd77785093276d1e2dbfab45adb9d8875701f0c69d3",
+    "backend_slow": "6dc9c117a3b58bcf0c87c98f489b979c6543ae74acd881d8e7044bb2cfcffeca",
+    "frontend_slow": "d2acc124dfc4bb149efbd4f4bf196254a53c127768fe7c818dabf069100e0163",
+    "control": "18dfd30293fd6712f8a4900f48084234255c2c5e72770b6b6840d46f2ad696b4"
+  },
+  "decisions": {
+    "backend_slow": {
+      "decision": "regression_observed",
+      "hypothesis": {
+        "label": "largest_exclusive_time_increase",
+        "service": "db",
+        "status": "measured_contributor_not_proven_cause",
+        "baseline_evidence_ids": [
+          "baseline-0-db",
+          "baseline-1-db",
+          "baseline-2-db",
+          "baseline-3-db",
+          "baseline-4-db",
+          "baseline-5-db",
+          "baseline-6-db"
+        ],
+        "candidate_evidence_ids": [
+          "backend-slow-0-db",
+          "backend-slow-1-db",
+          "backend-slow-2-db",
+          "backend-slow-3-db",
+          "backend-slow-4-db",
+          "backend-slow-5-db",
+          "backend-slow-6-db"
+        ]
+      },
+      "thresholds": {
+        "wall_ratio": 1.25,
+        "wall_increase_ms": 20
+      },
+      "baseline_runs": 7,
+      "candidate_runs": 7,
+      "clock_identity_status": "consistent_reported_clock_host_id",
+      "operation": "GET /work",
+      "baseline_median_wall_ms": 3.667,
+      "candidate_median_wall_ms": 44.124,
+      "contributors": [
+        {
+          "service": "db",
+          "baseline_median_exclusive_ms": 2.013,
+          "candidate_median_exclusive_ms": 42.128,
+          "delta_ms": 40.115
+        },
+        {
+          "service": "api",
+          "baseline_median_exclusive_ms": 1.657,
+          "candidate_median_exclusive_ms": 1.93,
+          "delta_ms": 0.273
+        }
+      ]
+    },
+    "frontend_slow": {
+      "decision": "regression_observed",
+      "hypothesis": {
+        "label": "largest_exclusive_time_increase",
+        "service": "api",
+        "status": "measured_contributor_not_proven_cause",
+        "baseline_evidence_ids": [
+          "baseline-0-front",
+          "baseline-1-front",
+          "baseline-2-front",
+          "baseline-3-front",
+          "baseline-4-front",
+          "baseline-5-front",
+          "baseline-6-front"
+        ],
+        "candidate_evidence_ids": [
+          "frontend-slow-0-front",
+          "frontend-slow-1-front",
+          "frontend-slow-2-front",
+          "frontend-slow-3-front",
+          "frontend-slow-4-front",
+          "frontend-slow-5-front",
+          "frontend-slow-6-front"
+        ]
+      },
+      "thresholds": {
+        "wall_ratio": 1.25,
+        "wall_increase_ms": 20
+      },
+      "baseline_runs": 7,
+      "candidate_runs": 7,
+      "clock_identity_status": "consistent_reported_clock_host_id",
+      "operation": "GET /work",
+      "baseline_median_wall_ms": 3.667,
+      "candidate_median_wall_ms": 43.778,
+      "contributors": [
+        {
+          "service": "api",
+          "baseline_median_exclusive_ms": 1.657,
+          "candidate_median_exclusive_ms": 41.767,
+          "delta_ms": 40.11
+        },
+        {
+          "service": "db",
+          "baseline_median_exclusive_ms": 2.013,
+          "candidate_median_exclusive_ms": 2.011,
+          "delta_ms": -0.002
+        }
+      ]
+    },
+    "control": {
+      "decision": "no_threshold_regression_observed",
+      "hypothesis": null,
+      "thresholds": {
+        "wall_ratio": 1.25,
+        "wall_increase_ms": 20
+      },
+      "baseline_runs": 7,
+      "candidate_runs": 7,
+      "clock_identity_status": "consistent_reported_clock_host_id",
+      "operation": "GET /work",
+      "baseline_median_wall_ms": 3.667,
+      "candidate_median_wall_ms": 3.706,
+      "contributors": [
+        {
+          "service": "api",
+          "baseline_median_exclusive_ms": 1.657,
+          "candidate_median_exclusive_ms": 1.696,
+          "delta_ms": 0.039
+        },
+        {
+          "service": "db",
+          "baseline_median_exclusive_ms": 2.013,
+          "candidate_median_exclusive_ms": 2.01,
+          "delta_ms": -0.003
+        }
+      ]
+    }
+  },
+  "clock_provenance_negative": {
+    "decision": "insufficient_comparable_evidence",
+    "hypothesis": null,
+    "thresholds": {
+      "wall_ratio": 1.25,
+      "wall_increase_ms": 20
+    },
+    "baseline_runs": 7,
+    "candidate_runs": 7,
+    "clock_identity_status": "mixed_reported_and_assumed_clock_origin"
+  },
+  "measured_cpu_medians_ms": {
+    "baseline": {
+      "frontend": 1.006,
+      "backend": 2.007
+    },
+    "backend_slow": {
+      "frontend": 1.007,
+      "backend": 42.009
+    },
+    "frontend_slow": {
+      "frontend": 41.007,
+      "backend": 2.009
+    },
+    "control": {
+      "frontend": 1.008,
+      "backend": 2.009
+    }
+  },
+  "limitations": [
+    "Both services run as real TCP HTTP servers on one host/process; no independent clock synchronization.",
+    "CPU work is deliberately injected and known in advance; source-identity labels are self-reported, not cryptographically verified.",
+    "Decision is a measured exclusive-span contributor, not autonomous causal root-cause proof.",
+    "Request cohorts are sequential and under low load; no distributed tracing service, profiling or AI agent."
+  ]
+}
