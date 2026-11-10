@@ -32,6 +32,8 @@ python3 scripts/evaluate_blind_cases.py --cpp-backend build/cpp_backend \
 
 The local experiment injects backend CPU work, frontend CPU work and a no-regression control. Seven independent requests are collected per cohort; reports include verified event IDs, source SHA-256, measured CPU time and explicit limits. A separate label-withheld test evaluates backend, frontend, no-regression and subthreshold cases; mismatched span topology now causes abstention rather than confident misattribution. [Experimental evidence and reasoning](docs/REAL_HTTP_EVIDENCE.md) · [Label-withheld evaluation and limits](docs/BLIND_EVALUATION.md) · [Captured sample SHA-256 manifest](evidence/real-http-cpp/SHA256SUMS).
 
+**Clock-source limitation:** Cross-host `CLOCK_MONOTONIC` spans cannot be subtracted safely. The analyzer now checks an optional per-span `clock_host_id` for consistency and rejects mixed/partially identified trace hosts. Untagged legacy traces remain explicitly marked as an *assumed*, unverified single-host clock. [Clock provenance and adversarial tests](docs/CLOCK_PROVENANCE.md).
+
 ## Why this project exists
 
 When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof. The comparator also fingerprints the **full rooted call tree**, so moving a child between two same-named service spans no longer yields a false comparable-cohort claim. [Adversarial counterexample](docs/TOPOLOGY_COMPARABILITY.md).

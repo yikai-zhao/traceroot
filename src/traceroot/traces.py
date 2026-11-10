@@ -14,6 +14,7 @@ from typing import Iterable
 
 from .core import Event
 from .topology import canonical_topology
+from .clock_provenance import ClockHostTracker
 
 
 @dataclass(frozen=True)
@@ -61,11 +62,13 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
     """
     groups: dict[str, dict[str, Span]] = defaultdict(dict)
     domains: dict[str, str] = {}
+    clock_hosts = ClockHostTracker()
     for e in events:
         if e.kind != 'service_span':
             continue
         f = e.fields
         trace_id = _string(f.get('trace_id'), 'trace_id')
+        clock_hosts.observe(trace_id, f)
         span_id = _string(f.get('span_id'), 'span_id')
         service = _string(f.get('service'), 'service')
         clock_domain = _string(f.get('clock_domain', 'local_monotonic'), 'clock_domain')
@@ -138,6 +141,7 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
         top = rows[0]
         reports.append({
             'trace_id': trace_id, 'clock_domain': domains[trace_id],
+            'clock_identity_status': clock_hosts.status(trace_id),
             'operation': roots[0].operation if len(roots) == 1 else None,
             'span_count': len(nodes), 'root_count': len(roots),
             'topology_signature': topology,
