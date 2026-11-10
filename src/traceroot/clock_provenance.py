@@ -25,3 +25,7 @@ class ClockHostTracker:
             raise KeyError(trace_id)
         return ('consistent_reported_clock_host_id' if self._identity[trace_id] is not None
                 else 'assumed_single_host_not_verified')
+
+    def identity(self, trace_id: str) -> str | None:
+        """Self-reported host identity; not cryptographic or clock-sync proof."""
+        return self._identity[trace_id]

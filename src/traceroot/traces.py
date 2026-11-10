@@ -142,6 +142,7 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
         reports.append({
             'trace_id': trace_id, 'clock_domain': domains[trace_id],
             'clock_identity_status': clock_hosts.status(trace_id),
+            'clock_host_id': clock_hosts.identity(trace_id),
             'operation': roots[0].operation if len(roots) == 1 else None,
             'span_count': len(nodes), 'root_count': len(roots),
             'topology_signature': topology,
@@ -180,6 +181,15 @@ def compare_runs(baseline: Iterable[Event], candidate: Iterable[Event],
         result['clock_identity_status'] = 'mixed_reported_and_assumed_clock_origin'
         return result
     result['clock_identity_status'] = next(iter(statuses))
+    # Within-trace durations are still valid when two cohorts ran on different
+    # hosts: they never require subtracting absolute clocks across traces.
+    # However, differing host performance can confound a *version regression*
+    # interpretation, so report the comparison as observational evidence.
+    result['cohort_host_warning'] = None
+    if result['clock_identity_status'] == 'consistent_reported_clock_host_id':
+        hosts = {r['clock_host_id'] for r in all_runs}
+        if len(hosts) != 1:
+            result['cohort_host_warning'] = 'distinct_reported_hosts_confound_attribution'
     if any(r['root_count'] != 1 or r['operation'] is None for r in all_runs):
         return result
     if len({r['operation'] for r in all_runs}) != 1:
