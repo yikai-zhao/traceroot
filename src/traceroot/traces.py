@@ -172,6 +172,14 @@ def compare_runs(baseline: Iterable[Event], candidate: Iterable[Event],
     if len(before) < min_runs or len(after) < min_runs:
         return result
     all_runs = before + after
+    # A cohort with explicit single-host identities must not be compared to
+    # a cohort whose origin is merely assumed. Mixing evidence-quality levels
+    # can conceal an unrecognised cross-host monotonic subtraction.
+    statuses = {r['clock_identity_status'] for r in all_runs}
+    if len(statuses) != 1:
+        result['clock_identity_status'] = 'mixed_reported_and_assumed_clock_origin'
+        return result
+    result['clock_identity_status'] = next(iter(statuses))
     if any(r['root_count'] != 1 or r['operation'] is None for r in all_runs):
         return result
     if len({r['operation'] for r in all_runs}) != 1:
