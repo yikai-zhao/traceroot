@@ -137,6 +137,15 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
                          'service': span.service, 'parent_span_id': span.parent,
                          'inclusive_ms': round(span.duration_ns / 1e6, 3),
                          'exclusive_ms': round(exclusive / 1e6, 3)})
+        # Summing exclusive time across parallel branches is not a critical
+        # path analysis. Detect concurrent siblings explicitly rather than
+        # manufacturing a single end-to-end slowdown attribution.
+        parallel_pairs = sum(
+            left.start_ns < right.end_ns and right.start_ns < left.end_ns
+            for siblings in children.values()
+            for index, left in enumerate(siblings)
+            for right in siblings[index + 1:]
+        )
         rows.sort(key=lambda x: (-x['exclusive_ms'], x['evidence_id']))
         top = rows[0]
         reports.append({
@@ -145,6 +154,7 @@ def summarize_traces(events: Iterable[Event]) -> list[dict]:
             'clock_host_id': clock_hosts.identity(trace_id),
             'operation': roots[0].operation if len(roots) == 1 else None,
             'span_count': len(nodes), 'root_count': len(roots),
+            'parallel_sibling_pairs': parallel_pairs,
             'topology_signature': topology,
             'wall_ms': round((max(n.end_ns for n in nodes.values()) -
                               min(n.start_ns for n in nodes.values())) / 1e6, 3),
@@ -195,6 +205,11 @@ def compare_runs(baseline: Iterable[Event], candidate: Iterable[Event],
     if len({r['operation'] for r in all_runs}) != 1:
         return result
     if any(r['topology_signature'] != all_runs[0]['topology_signature'] for r in all_runs[1:]):
+        return result
+    if any(r['parallel_sibling_pairs'] > 0 for r in all_runs):
+        result['parallel_span_warning'] = (
+            'overlapping_sibling_spans_require_critical_path_analysis'
+        )
         return result
     def service_totals(run: dict) -> dict[str, float]:
         totals = defaultdict(float)
