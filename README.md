@@ -40,6 +40,8 @@ The local experiment injects backend CPU work, frontend CPU work and a no-regres
 
 **Cross-host performance comparisons (2026-11-10).** The analyzer now marks observed latency deltas as potentially confounded when the baseline and candidate report different host identities. Within-trace duration arithmetic remains valid, but a changed host does not isolate a software regression. [Evidence and counterexamples](docs/CROSS_HOST_COHORTS_20261110.md).
 
+**New concurrency safety check (2026-11-17):** The comparator now detects overlapping sibling spans. It abstains on parallel fan-out rather than treating summed exclusive service time as a validated end-to-end critical-path explanation. A new [synthetic three-service adversarial regression suite](docs/PARALLEL_FANOUT.md) covers serial positive and concurrent negative cases. These additions have not been validated on production distributed traces.
+
 ## Why this project exists
 
 When a multi-service request becomes slower, parent span duration alone is a poor diagnosis: it includes downstream time. TraceRoot validates span containment and subtracts the **union of child intervals** to avoid double-counting, then screens comparable cohorts using published median thresholds. A ranked contributor is an *investigation target*, not causal proof. The comparator also fingerprints the **full rooted call tree**, so moving a child between two same-named service spans no longer yields a false comparable-cohort claim. [Adversarial counterexample](docs/TOPOLOGY_COMPARABILITY.md).
